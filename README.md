@@ -19,7 +19,7 @@ To use the Microsoft Graph Excel REST API ASP.NET to-do list sample, you need th
 	* In the [Azure Management Portal](https://manage.windowsazure.com/), select the **Active Directory** tab and an Office 365 tenant.
 	* Select the **Applications** tab and choose the application that you want to configure.
 	* In the **permissions to other applications** section, add the **Microsoft Graph** application.
-	* For the **Microsoft Graph** application, add the following delegated permissions: **Have full access to user files and files shared with user**.
+	* For the **Microsoft Graph** application, add the following delegated permissions: **Have full access to user files, read and write access to user progile and sigi in to user profile**.
 	* Save the changes.
 
      > Note: During the app registration process, make sure to specify **http://localhost:21942** as the **Sign-on URL**.  

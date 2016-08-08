@@ -1,9 +1,8 @@
-# Microsoft Graph Excel REST API ASP.NET to-do list sample
+# Microsoft Graph Excel REST API ASP.NET Excel as a Calculation Service sample
 
-This sample shows how to read and write into an Excel document stored in your OneDrive for Business account by using the Excel REST APIs.
+This sample shows how to call an Excel function within an Excel document stored in your OneDrive for Business account by using the Excel REST APIs.
 
 ## Prerequisites
-
 
 To use the Microsoft Graph Excel REST API ASP.NET to-do list sample, you need the following:
 * Visual Studio 2015 installed and working on your development computer. 
@@ -19,13 +18,13 @@ To use the Microsoft Graph Excel REST API ASP.NET to-do list sample, you need th
 	* In the [Azure Management Portal](https://manage.windowsazure.com/), select the **Active Directory** tab and an Office 365 tenant.
 	* Select the **Applications** tab and choose the application that you want to configure.
 	* In the **permissions to other applications** section, add the **Microsoft Graph** application.
-	* For the **Microsoft Graph** application, add the following delegated permissions: **Have full access to user files, read and write access to user progile and sigi in to user profile**.
+	* For the **Microsoft Graph** application, add the following delegated permissions: **Have full access to user files, read and write access to user profile and sign in to user profile**.
 	* Save the changes.
 
      > Note: During the app registration process, make sure to specify **http://localhost:21942** as the **Sign-on URL**.  
 
 ## Configure the app
-1. Open **Microsoft-Graph-ExcelRest-ToDo.sln** file. 
+1. Open **ExcelAsACalculationService.sln** file. 
 2. In Solution Explorer, open the **Web.config** file. 
 3. Replace *ENTER_YOUR_CLIENT_ID* with the client ID of your registered Azure application.
 4. Replace *ENTER_YOUR_SECRET* with the key of your registered Azure application.

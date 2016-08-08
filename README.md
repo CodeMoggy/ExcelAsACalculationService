@@ -30,5 +30,10 @@ To use the Microsoft Graph Excel REST API ASP.NET to-do list sample, you need th
 4. Replace *ENTER_YOUR_SECRET* with the key of your registered Azure application.
 
 ## Run the app
+1. Press F5 to build and debug. Run the solution and sign in with your organizational account. The application launches on your local host and shows the starter page. 
+     > Note: Copy and paste the start page URL address **http://localhost:21942/home/index** to a different browser if you get the following error during sign in: **AADSTS70001: Application with identifier ad533dcf-ccad-469a-abed-acd1c8cc0d7d was not found in the directory**.
+2. Select the `Excel` link from the top menu bar.
+4. The application relies on you having an Excel workbook called 'Book.xlsx' in the root OneDrive folder of your O365 account. If this file does not exist, please manually add to your OneDrive by navigating to **https://yourtenant.sharepoint.com**, clicking on the App Launcher "Waffle" at the top left of the page, and then choosing the OneDrive application - add a new Excel file called Book.xlsx.
+5. Enter the 3 values rate, nper, and pv and press the calculate button - the payment per month should be calculated. 
 
 

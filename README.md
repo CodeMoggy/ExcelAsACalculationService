@@ -4,7 +4,7 @@ This sample shows how to call an Excel function within an Excel document stored 
 
 ## Prerequisites
 
-To use the Microsoft Graph Excel REST API ASP.NET to-do list sample, you need the following:
+To use the Microsoft Graph Excel REST API ASP.NET Excel as a Calculation Service, you need the following:
 * Visual Studio 2015 installed and working on your development computer. 
 
      > Note: This sample is written using Visual Studio 2015. If you're using Visual Studio 2013, make sure to change the compiler language version to 5 in the Web.config file:  **compilerOptions="/langversion:5**

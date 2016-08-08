@@ -12,7 +12,7 @@ namespace ExcelAsACalculationService.Models
     public class ADALTokenCache : TokenCache
     {
         private ApplicationDbContext db = new ApplicationDbContext();
-        private string userId;
+        public string userId;
         private UserTokenCache Cache;
 
         public ADALTokenCache(string signedInUserId)

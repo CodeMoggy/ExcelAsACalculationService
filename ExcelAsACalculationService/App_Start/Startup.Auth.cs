@@ -1,4 +1,7 @@
-﻿using System;
+﻿//Copyright (c) Microsoft. All rights reserved. Licensed under the MIT license.
+//See LICENSE in the project root for license information.
+
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IdentityModel.Claims;
@@ -18,7 +21,7 @@ namespace ExcelAsACalculationService
     {
         private static string clientId = ConfigurationManager.AppSettings["ida:ClientId"];
         private string appKey = ConfigurationManager.AppSettings["ida:ClientSecret"];
-        private string graphResourceID = "https://graph.windows.net";
+        private string graphResourceID = "https://graph.microsoft.com";
         private static string aadInstance = ConfigurationManager.AppSettings["ida:AADInstance"];
         private string authority = aadInstance + "common";
         private ApplicationDbContext db = new ApplicationDbContext();

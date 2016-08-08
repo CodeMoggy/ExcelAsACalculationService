@@ -54,7 +54,7 @@ namespace ExcelFunctionaaService.Controllers
             // get the values from the modelstate class (pmt)
 
             // as a percentage per month
-            decimal rate = pmt.InterestRate / 12/ 100;
+            decimal rate = pmt.InterestRate / 12 / 100;
 
             // inverse the amount (simply to show the value as a positive amount)
             decimal loanAmount = pmt.LoanAmount * -1;
@@ -89,7 +89,7 @@ namespace ExcelFunctionaaService.Controllers
             var userIdentifier = new UserIdentifier(userObjectId, UserIdentifierType.UniqueId);
 
             // create auth context
-            AuthenticationContext authContext = new AuthenticationContext(aadInstance + tenantID, new ADALTokenCache(signInUserId));
+            AuthenticationContext authContext = new AuthenticationContext(aadInstance + tenantID, new SessionTokenCache(userObjectId, HttpContext));
             var result = await authContext.AcquireTokenSilentAsync(graphResourceUrl, clientCredential, userIdentifier);
 
             return result.AccessToken;

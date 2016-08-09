@@ -16,6 +16,7 @@ using Microsoft.Owin.Security.OpenIdConnect;
 using ExcelAsACalculationService.Models;
 using Microsoft.Graph;
 using System.Net.Http.Headers;
+using ExcelAsACalculationService.Helpers;
 
 namespace ExcelAsACalculationService.Controllers
 {
@@ -71,13 +72,13 @@ namespace ExcelAsACalculationService.Controllers
             string signedInUserID = ClaimsPrincipal.Current.FindFirst(ClaimTypes.NameIdentifier).Value;
             string tenantID = ClaimsPrincipal.Current.FindFirst("http://schemas.microsoft.com/identity/claims/tenantid").Value;
             string userObjectID = ClaimsPrincipal.Current.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier").Value;
+            string authority = aadInstance + tenantID;
+            SessionTokenCache tokenCache = new SessionTokenCache(userObjectID, HttpContext);
 
-            // get a token for the Graph without triggering any user interaction (from the cache, via multi-resource refresh token, etc)
-            ClientCredential clientcred = new ClientCredential(clientId, appKey);
-            // initialize AuthenticationContext with the token cache of the currently signed in user, as kept in the app's database
-            AuthenticationContext authenticationContext = new AuthenticationContext(aadInstance + tenantID, new SessionTokenCache(userObjectID, HttpContext));
-            AuthenticationResult authenticationResult = await authenticationContext.AcquireTokenSilentAsync(graphResourceUrl, clientcred, new UserIdentifier(userObjectID, UserIdentifierType.UniqueId));
-            return authenticationResult.AccessToken;
+            AuthHelper authHelper = new AuthHelper(authority, clientId, appKey, tokenCache);
+            string accessToken = await authHelper.GetUserAccessToken(Url.Action("Index", "Home", null, Request.Url.Scheme));
+
+            return accessToken;
         }
     }
 }

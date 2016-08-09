@@ -16,6 +16,7 @@ using System.Net.Http.Headers;
 using Newtonsoft.Json;
 using System.Text;
 using Newtonsoft.Json.Linq;
+using ExcelAsACalculationService.Helpers;
 
 namespace ExcelFunctionaaService.Controllers
 {
@@ -27,7 +28,6 @@ namespace ExcelFunctionaaService.Controllers
         private string aadInstance = ConfigurationManager.AppSettings["ida:AADInstance"];
         private string graphResourceUrl = "https://graph.microsoft.com";
         private string accessToken = string.Empty;
-        private string sessionId = string.Empty;
 
         // GET: ExcelFunction
         public ActionResult Index()
@@ -38,18 +38,7 @@ namespace ExcelFunctionaaService.Controllers
         [HttpPost]
         public async Task<ActionResult> Calculate(PMT pmt)
         {
-            accessToken = await GetGraphAccessTokenAsync();
-
-            // create a new workbook session
-            var restUrl = string.Format("{0}/v1.0/me/drive/root:/book.xlsx:/workbook/createSession", graphResourceUrl);
-
-            var sessionRequest = new SessionRequest { persistChanges = "true" };
-
-            var result = await DoRequest(HttpMethod.Post, sessionRequest, restUrl);
-
-            // get the sessionId from the result
-            dynamic d = JObject.Parse(result);
-            sessionId = d.id;
+            var accessToken = await GetGraphAccessTokenAsync();
 
             // get the values from the modelstate class (pmt)
 
@@ -63,9 +52,9 @@ namespace ExcelFunctionaaService.Controllers
             int numberOfMonths = pmt.NumberOfMonths;
 
             // call one of the built-in workbook functions (pmt)
-            restUrl = string.Format(@"{0}/v1.0/me/drive/root:/book.xlsx:/workbook/functions/pmt", graphResourceUrl);
+            var restUrl = string.Format(@"{0}/v1.0/me/drive/root:/book.xlsx:/workbook/functions/pmt", graphResourceUrl);
             var pmtRequest = new PMTRequest { Rate = rate, Nper = numberOfMonths, Pv = loanAmount };
-            result = await DoRequest(HttpMethod.Post, pmtRequest, restUrl);
+            var result = await DoRequestAsync(HttpMethod.Post, pmtRequest, restUrl, accessToken);
 
             // refresh the model's MonthlyPaymentAmount
             ModelState.Remove("MonthlyPaymentAmount");
@@ -84,19 +73,17 @@ namespace ExcelFunctionaaService.Controllers
             var signInUserId = ClaimsPrincipal.Current.FindFirst(ClaimTypes.NameIdentifier).Value;
             var userObjectId = ClaimsPrincipal.Current.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier").Value;
             string tenantID = ClaimsPrincipal.Current.FindFirst("http://schemas.microsoft.com/identity/claims/tenantid").Value;
+            string authority = aadInstance + tenantID;
+            SessionTokenCache tokenCache = new SessionTokenCache(userObjectId, HttpContext);
 
-            var clientCredential = new ClientCredential(clientId, appKey);
-            var userIdentifier = new UserIdentifier(userObjectId, UserIdentifierType.UniqueId);
+            AuthHelper authHelper = new AuthHelper(authority, clientId, appKey, tokenCache);
+            string accessToken = await authHelper.GetUserAccessToken(Url.Action("Index", "Home", null, Request.Url.Scheme));
 
-            // create auth context
-            AuthenticationContext authContext = new AuthenticationContext(aadInstance + tenantID, new SessionTokenCache(userObjectId, HttpContext));
-            var result = await authContext.AcquireTokenSilentAsync(graphResourceUrl, clientCredential, userIdentifier);
-
-            return result.AccessToken;
+            return accessToken;
         }
 
         // do the call to the Graph REST API endpoint - RAW not using the Graph Client 
-        private async Task<string> DoRequest(HttpMethod method, IExcelRequest excelRequest, string url)
+        private async Task<string> DoRequestAsync(HttpMethod method, IExcelRequest excelRequest, string url, string accessToken)
         {
             string result = string.Empty;
 
@@ -106,13 +93,7 @@ namespace ExcelFunctionaaService.Controllers
                 {
                     request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
-                    if (!string.IsNullOrEmpty(sessionId))
-                        request.Headers.Add("workbook-session-id", sessionId);
-
-                    if (excelRequest != null)
-                    {
-                        request.Content = new StringContent(JsonConvert.SerializeObject(excelRequest), Encoding.UTF8, "application/json");
-                    }
+                    request.Content = new StringContent(JsonConvert.SerializeObject(excelRequest), Encoding.UTF8, "application/json");
 
                     using (HttpResponseMessage response = await client.SendAsync(request))
                     {

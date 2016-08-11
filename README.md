@@ -1,6 +1,6 @@
 # Microsoft Graph Excel REST API ASP.NET Excel as a Calculation Service sample
 
-This sample shows how to call an Excel function within an Excel document stored in your OneDrive for Business account by using the Excel REST APIs.
+This sample shows how to call an Excel built-in function (PMT) from within an Excel document stored in your OneDrive for Business account using the Excel REST APIs.
 
 ## Prerequisites
 
